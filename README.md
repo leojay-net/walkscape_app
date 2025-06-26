@@ -1,3 +1,5 @@
+# Contract Repository: `https://github.com/leojay-net/walkscape_contract`
+
 # WalkScape
 
 A blockchain-powered location-based exploration game built on Starknet that connects the real world with digital adventures. Touch grass, discover artifacts, grow digital pets, and build communities while exploring your surroundings.
@@ -81,7 +83,6 @@ WalkScape leverages advanced AI to create intelligent, location-aware gameplay:
 - **Transaction Management**: Reliable confirmation and error handling
 - **Gas Optimization**: Efficient contract calls and batch operations
 
-### Contract Repository: `https://github.com/leojay-net/walkscape`
 
 ### Frontend Stack
 - **Next.js 15**: React framework with App Router and Turbopack
