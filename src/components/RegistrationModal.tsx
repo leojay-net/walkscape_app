@@ -60,6 +60,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
             const result = await account.execute([{
                 contractAddress: contract.address,
                 entrypoint: 'register_player',
+                calldata: []
             }]);
 
             console.log('Registration transaction:', result);

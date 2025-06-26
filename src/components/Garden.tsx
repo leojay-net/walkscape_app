@@ -59,24 +59,20 @@ export default function Garden() {
             const artifactIds = await contract.get_player_artifacts(account.address);
             setArtifacts(artifactIds);
 
-            // Load pets (we'll need to implement this based on pet count)
-            const petCount = Number(playerStats.pets_owned);
+            // Load pets using the new get_player_pets function
+            const petIds = await contract.get_player_pets(account.address);
             const petData: Pet[] = [];
 
-            // Note: In a real implementation, we'd need a way to get pet IDs
-            // For now, we'll simulate based on the pet count
-            for (let i = 0; i < petCount; i++) {
+            // Load stats for each pet owned by the player
+            for (const petId of petIds) {
                 try {
-                    // This is a simplified approach - in reality you'd track pet IDs
-                    const petStats = await contract.get_pet_stats(BigInt(i + 1));
-                    if (petStats.owner === account.address) {
-                        petData.push({
-                            id: (i + 1).toString(),
-                            ...petStats
-                        });
-                    }
+                    const petStats = await contract.get_pet_stats(petId);
+                    petData.push({
+                        id: petId.toString(),
+                        ...petStats
+                    });
                 } catch (error) {
-                    // Pet doesn't exist or not owned by user
+                    console.error(`Failed to load pet ${petId}:`, error);
                     continue;
                 }
             }

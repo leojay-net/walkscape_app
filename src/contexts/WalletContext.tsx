@@ -12,7 +12,7 @@ type ConnectedStarknetWindowObject = any;
 // Import browser-only modules
 let getStarknet: any = null;
 
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x03c29b71472f27ce4d5540844bb5a9ed2725d11918795aa26d65ae8bd2a2acf2";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x006a65f237b636fe5e2fc8c4f470309582312a24bd3cbd5be288aa32ed8b4f9a";
 
 interface WalletContextType {
     isLoading: boolean;

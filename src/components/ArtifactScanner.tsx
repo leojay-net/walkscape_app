@@ -20,8 +20,18 @@ import {
     RefreshCw,
     Image as ImageIcon,
     Video,
-    Download
+    Download,
+    Brain
 } from 'lucide-react';
+import {
+    analyzeEnvironmentWithGemini,
+    analyzeEnvironmentWithAlternative,
+    getArtifactTypeFromName,
+    getConfidenceColor,
+    formatConfidence,
+    EnvironmentDetection,
+    DetectionResult
+} from '@/lib/aiDetection';
 
 // Types for dynamic imports
 type UseReactMediaRecorderReturn = {
@@ -47,6 +57,11 @@ export default function ArtifactScanner() {
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [isCapturing, setIsCapturing] = useState(false);
     const webcamRef = useRef<any>(null);
+
+    // AI Environment Detection state
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [environmentDetection, setEnvironmentDetection] = useState<EnvironmentDetection | null>(null);
+    const [aiDetectionError, setAiDetectionError] = useState<string | null>(null);
 
     // Dynamic imports for browser-specific functionality
     const [imageCompression, setImageCompression] = useState<ImageCompressionFunction | null>(null);
@@ -133,11 +148,55 @@ export default function ArtifactScanner() {
             if (imageSrc) {
                 setCapturedImage(imageSrc);
                 console.log('Photo captured successfully');
+
+                // Automatically analyze the captured image
+                await analyzeEnvironment(imageSrc);
             }
         }
 
         setIsCapturing(false);
     }, []);
+
+    // AI Environment Analysis
+    const analyzeEnvironment = useCallback(async (imageData: string) => {
+        setIsAnalyzing(true);
+        setAiDetectionError(null);
+        setEnvironmentDetection(null);
+
+        try {
+            console.log('🤖 Starting Gemini AI environment analysis...');
+
+            // Try Gemini AI first with your API key
+            const result = await analyzeEnvironmentWithGemini(imageData);
+
+            if (result.success && result.data) {
+                setEnvironmentDetection(result.data);
+                console.log('✅ Gemini AI Analysis complete:', result.data);
+
+                // Auto-select the first suggested artifact
+                if (result.data.suggestedArtifacts.length > 0) {
+                    const suggestedType = getArtifactTypeFromName(result.data.suggestedArtifacts[0]);
+                    setSelectedArtifactType(suggestedType as ArtifactType);
+                    console.log('🎯 Auto-selected artifact type:', result.data.suggestedArtifacts[0]);
+                }
+            } else {
+                setAiDetectionError(result.error || 'Failed to analyze environment');
+                console.error('❌ Gemini AI Analysis failed:', result.error);
+            }
+        } catch (error: any) {
+            setAiDetectionError(error.message || 'AI analysis error');
+            console.error('❌ AI Analysis error:', error);
+        } finally {
+            setIsAnalyzing(false);
+        }
+    }, []);
+
+    // Manual AI analysis trigger
+    const triggerManualAnalysis = useCallback(async () => {
+        if (capturedImage) {
+            await analyzeEnvironment(capturedImage);
+        }
+    }, [capturedImage, analyzeEnvironment]);
 
     // Enhanced camera error handling
     const handleCameraError = useCallback((error: string | DOMException) => {
@@ -203,24 +262,50 @@ export default function ArtifactScanner() {
                 await new Promise(resolve => setTimeout(resolve, 2000));
             }
 
+            console.log('🌱 Starting touch grass process...');
+            console.log('Account:', account.address);
+            console.log('Location:', location);
+
             const contract = getContract(account);
             const locationHash = generateLocationHash(location.lat, location.lng, 'grass_touch');
 
-            await contract.touch_grass_checkin(locationHash);
+            console.log('Generated location hash:', locationHash);
+            console.log('📡 Calling touch_grass_checkin on contract...');
+
+            const tx = await contract.touch_grass_checkin(locationHash);
+            console.log('Transaction submitted:', tx);
+
+            // Wait for transaction confirmation
+            console.log('⏳ Waiting for transaction confirmation...');
+            const receipt = await account.waitForTransaction(tx.transaction_hash);
+            console.log('Transaction confirmed:', receipt);
 
             setScanResult({
                 success: true,
-                message: 'Grass touched! +15 XP earned'
+                message: `Grass touched successfully! +15 XP earned. Transaction: ${tx.transaction_hash.slice(0, 10)}...`
             });
 
             setTimeout(() => {
+                console.log('🔄 Refreshing player stats...');
                 refreshPlayerStats();
-            }, 2000);
+            }, 3000);
 
         } catch (error: any) {
+            console.error('❌ Touch grass failed:', error);
+
+            let errorMessage = 'Failed to touch grass.';
+
+            if (error?.message?.includes('Player not registered')) {
+                errorMessage = 'Please complete registration first.';
+            } else if (error?.message?.includes('execution was reverted')) {
+                errorMessage = 'Transaction failed. There may have been a contract error.';
+            } else if (error?.message) {
+                errorMessage = error.message;
+            }
+
             setScanResult({
                 success: false,
-                message: error.message || 'Failed to touch grass. Try again!'
+                message: errorMessage
             });
         } finally {
             setIsScanning(false);
@@ -239,6 +324,11 @@ export default function ArtifactScanner() {
                 await new Promise(resolve => setTimeout(resolve, 3000));
             }
 
+            console.log('🔍 Starting artifact claim process...');
+            console.log('Account:', account.address);
+            console.log('Location:', location);
+            console.log('Selected artifact type:', selectedArtifactType);
+
             const contract = getContract(account);
             const locationHash = generateLocationHash(
                 location.lat,
@@ -246,21 +336,51 @@ export default function ArtifactScanner() {
                 `artifact_${selectedArtifactType}_${Date.now()}`
             );
 
-            await contract.claim_artifact(locationHash, selectedArtifactType);
+            console.log('Generated location hash:', locationHash);
+
+            // Add more detailed logging and transaction handling
+            console.log('📡 Calling claim_artifact on contract...');
+            const tx = await contract.claim_artifact(locationHash, selectedArtifactType);
+            console.log('Transaction submitted:', tx);
+
+            // Wait for transaction confirmation
+            console.log('⏳ Waiting for transaction confirmation...');
+            const receipt = await account.waitForTransaction(tx.transaction_hash);
+            console.log('Transaction confirmed:', receipt);
 
             const artifactNames = ['Mushroom', 'Fossil', 'Graffiti', 'Pixel Plant'];
             setScanResult({
                 success: true,
-                message: `${artifactNames[selectedArtifactType]} claimed! Check your garden.`
+                message: `${artifactNames[selectedArtifactType]} claimed successfully! Transaction: ${tx.transaction_hash.slice(0, 10)}...`
             });
 
+            // Refresh stats after successful transaction
             setTimeout(() => {
+                console.log('🔄 Refreshing player stats...');
                 refreshPlayerStats();
-            }, 2000);
+            }, 3000);
+
         } catch (error: any) {
+            console.error('❌ Artifact claim failed:', error);
+
+            let errorMessage = 'Failed to claim artifact.';
+
+            // Handle specific error cases
+            if (error?.message?.includes('Location already claimed')) {
+                errorMessage = 'This location has already been claimed. Try a different location!';
+            } else if (error?.message?.includes('Invalid artifact type')) {
+                errorMessage = 'Invalid artifact type selected. Please try again.';
+            } else if (error?.message?.includes('Player not registered')) {
+                errorMessage = 'Please complete registration first.';
+            } else if (error?.message?.includes('execution was reverted')) {
+                errorMessage = 'Transaction failed. You may have already claimed this location or there was a contract error.';
+            } else if (error?.message) {
+                errorMessage = error.message;
+            }
+
             setScanResult({
                 success: false,
-                message: error.message || 'Failed to claim artifact. Location may already be claimed!'
+                message: errorMessage
             });
         } finally {
             setIsScanning(false);
@@ -470,6 +590,93 @@ export default function ArtifactScanner() {
                 </div>
             </div>
 
+            {/* AI Environment Analysis */}
+            <div className="card">
+                <h3 className="font-bold mb-3 flex items-center gap-2">
+                    <Brain size={16} className="text-green-400" />
+                    AI Environment Analysis
+                </h3>
+
+                {isAnalyzing ? (
+                    <div className="flex items-center gap-2 p-3 bg-green-900/20 rounded-lg">
+                        <Loader2 size={16} className="animate-spin text-green-400" />
+                        <p className="text-sm text-green-400">Analyzing environment with AI...</p>
+                    </div>
+                ) : environmentDetection ? (
+                    <div className="space-y-3">
+                        <div className="bg-green-900/20 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <h4 className="font-medium text-green-400 capitalize">
+                                    {environmentDetection.environment}
+                                </h4>
+                                <span className={`text-sm font-medium ${getConfidenceColor(environmentDetection.confidence)}`}>
+                                    {formatConfidence(environmentDetection.confidence)} confident
+                                </span>
+                            </div>
+                            <p className="text-sm text-slate-300 mb-3">
+                                {environmentDetection.description}
+                            </p>
+
+                            <div className="space-y-2">
+                                <p className="text-xs text-slate-400 font-medium">Suggested Artifacts:</p>
+                                <div className="flex gap-2">
+                                    {environmentDetection.suggestedArtifacts.map((artifact, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => {
+                                                const artifactType = getArtifactTypeFromName(artifact);
+                                                setSelectedArtifactType(artifactType as ArtifactType);
+                                            }}
+                                            className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${artifactTypes[getArtifactTypeFromName(artifact)]?.name === artifact
+                                                    ? 'bg-green-600 text-white'
+                                                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                                }`}
+                                        >
+                                            {artifact}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {capturedImage && (
+                            <button
+                                onClick={triggerManualAnalysis}
+                                className="btn-secondary w-full flex items-center justify-center gap-2 text-sm"
+                            >
+                                <RefreshCw size={16} />
+                                Re-analyze Image
+                            </button>
+                        )}
+                    </div>
+                ) : aiDetectionError ? (
+                    <div className="space-y-3">
+                        <div className="flex items-start gap-2 text-gray-300 bg-gray-800/20 p-3 rounded-lg">
+                            <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+                            <div className="flex-1">
+                                <p className="text-sm font-medium">AI Analysis Error</p>
+                                <p className="text-xs text-gray-400 mt-1">{aiDetectionError}</p>
+                            </div>
+                        </div>
+                        {capturedImage && (
+                            <button
+                                onClick={triggerManualAnalysis}
+                                className="btn-secondary w-full flex items-center justify-center gap-2 text-sm"
+                            >
+                                <RefreshCw size={16} />
+                                Retry Analysis
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    <div className="text-center text-slate-400 p-4">
+                        <Camera size={24} className="mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Capture a photo to analyze the environment</p>
+                        <p className="text-xs mt-1">AI will suggest the best artifacts for this location</p>
+                    </div>
+                )}
+            </div>
+
             {/* Touch Grass Action */}
             <div className="card-forest">
                 <h3 className="font-bold mb-3 flex items-center gap-2">
@@ -580,11 +787,19 @@ export default function ArtifactScanner() {
                     Enhanced Features
                 </h3>
                 <div className="space-y-2 text-sm text-slate-400">
-                    <p><strong>Camera Controls:</strong> Capture photos and record videos of your discoveries</p>
-                    <p><strong>Location Tracking:</strong> Enhanced GPS accuracy for better artifact detection</p>
-                    <p><strong>Media Recording:</strong> Document your adventures with video recording</p>
-                    <p><strong>Auto-retry:</strong> Automatic fallback for camera and location access</p>
-                    <p><strong>Performance:</strong> Image compression and optimized media handling</p>
+                    <p><strong>AI Environment Analysis:</strong> Automatically detect environment types and suggest optimal artifacts</p>
+                    <p><strong>Smart Camera:</strong> Capture photos with automatic environment recognition</p>
+                    <p><strong>Auto-Selection:</strong> AI suggests the best artifact types based on your surroundings</p>
+                    <p><strong>Enhanced Detection:</strong> Advanced GPS and visual analysis for accurate location-based claims</p>
+                    <p><strong>Transaction Tracking:</strong> Real-time blockchain transaction monitoring and confirmation</p>
+                    <p><strong>Smart Retry:</strong> Automatic fallback systems for camera, location, and AI services</p>
+                </div>
+
+                <div className="mt-4 p-3 bg-green-800/30 rounded-lg border border-green-500/30">
+                    <p className="text-xs text-green-400">
+                        <strong>Gemini AI Active:</strong> Advanced AI environment analysis is enabled with your API key. 
+                        The system will analyze your photos with Google Gemini Vision for accurate artifact suggestions.
+                    </p>
                 </div>
             </div>
         </div>
