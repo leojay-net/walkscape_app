@@ -81,6 +81,8 @@ WalkScape leverages advanced AI to create intelligent, location-aware gameplay:
 - **Transaction Management**: Reliable confirmation and error handling
 - **Gas Optimization**: Efficient contract calls and batch operations
 
+### Contract Repository: `https://github.com/leojay-net/walkscape`
+
 ### Frontend Stack
 - **Next.js 15**: React framework with App Router and Turbopack
 - **TypeScript**: Type-safe development with full blockchain integration
