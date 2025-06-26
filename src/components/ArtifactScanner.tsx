@@ -231,6 +231,36 @@ export default function ArtifactScanner() {
         setIsCameraActive(false);
     }, []);
 
+    // Check if the detected environment is suitable for touching grass (outdoor)
+    const isOutdoorEnvironment = useCallback(() => {
+        if (!environmentDetection) return false;
+
+        const outdoorEnvironments = [
+            'forest', 'park', 'garden', 'beach', 'field', 'mountain',
+            'urban', 'street', 'outdoor', 'nature', 'grass', 'trail',
+            'countryside', 'wilderness', 'meadow', 'hill', 'valley'
+        ];
+
+        const environment = environmentDetection.environment.toLowerCase();
+        return outdoorEnvironments.some(outdoor => environment.includes(outdoor));
+    }, [environmentDetection]);
+
+    // Enhanced touch grass validation
+    const canTouchGrass = useCallback(() => {
+        if (!location) return { canTouch: false, reason: 'Location required' };
+        if (!capturedImage) return { canTouch: false, reason: 'Take a photo to verify outdoor location' };
+        if (isAnalyzing) return { canTouch: false, reason: 'Analyzing environment...' };
+
+        if (environmentDetection && !isOutdoorEnvironment()) {
+            return {
+                canTouch: false,
+                reason: `Cannot touch grass indoors (detected: ${environmentDetection.environment})`
+            };
+        }
+
+        return { canTouch: true, reason: 'Ready to touch grass!' };
+    }, [location, capturedImage, isAnalyzing, environmentDetection, isOutdoorEnvironment]);
+
     // Get user location on component mount
     useEffect(() => {
         if (isRegistered) {
@@ -628,8 +658,8 @@ export default function ArtifactScanner() {
                                                 setSelectedArtifactType(artifactType as ArtifactType);
                                             }}
                                             className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${artifactTypes[getArtifactTypeFromName(artifact)]?.name === artifact
-                                                    ? 'bg-green-600 text-white'
-                                                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                                ? 'bg-green-600 text-white'
+                                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                                 }`}
                                         >
                                             {artifact}
@@ -687,9 +717,29 @@ export default function ArtifactScanner() {
                     Verify your outdoor presence to earn XP and maintain your streak!
                 </p>
 
+                {/* Touch Grass Validation Status */}
+                {(() => {
+                    const validation = canTouchGrass();
+                    return (
+                        <div className={`p-3 rounded-lg mb-3 text-sm ${validation.canTouch
+                                ? 'bg-green-900/20 border border-green-500/30 text-green-400'
+                                : 'bg-gray-900/20 border border-gray-500/30 text-gray-400'
+                            }`}>
+                            <div className="flex items-center gap-2">
+                                {validation.canTouch ? (
+                                    <CheckCircle size={16} className="text-green-400" />
+                                ) : (
+                                    <AlertCircle size={16} className="text-gray-400" />
+                                )}
+                                <span>{validation.reason}</span>
+                            </div>
+                        </div>
+                    );
+                })()}
+
                 <button
                     onClick={handleTouchGrass}
-                    disabled={isScanning || !location}
+                    disabled={isScanning || !canTouchGrass().canTouch}
                     className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isScanning ? (
@@ -797,7 +847,7 @@ export default function ArtifactScanner() {
 
                 <div className="mt-4 p-3 bg-green-800/30 rounded-lg border border-green-500/30">
                     <p className="text-xs text-green-400">
-                        <strong>Gemini AI Active:</strong> Advanced AI environment analysis is enabled with your API key. 
+                        <strong>Gemini AI Active:</strong> Advanced AI environment analysis is enabled with your API key.
                         The system will analyze your photos with Google Gemini Vision for accurate artifact suggestions.
                     </p>
                 </div>

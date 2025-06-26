@@ -150,6 +150,19 @@ export default function Dashboard() {
         v => typeof v === 'bigint' ? v === BigInt(0) : v === 0
     );
 
+    // Check if user touched grass today
+    const touchedGrassToday = () => {
+        if (!actualStats.last_checkin || actualStats.last_checkin === BigInt(0)) {
+            return false;
+        }
+
+        const lastCheckinDate = new Date(Number(actualStats.last_checkin) * 1000);
+        const today = new Date();
+
+        // Check if last checkin was today
+        return lastCheckinDate.toDateString() === today.toDateString();
+    };
+
     return (
         <div className="space-y-8">
             {/* Welcome Header */}
@@ -254,7 +267,10 @@ export default function Dashboard() {
                     </h3>
 
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-green-900/20 rounded-lg border border-green-500/20 hover:border-green-500/40 transition-colors cursor-pointer">
+                        <div
+                            onClick={() => window.location.href = '/scanner'}
+                            className="flex items-center justify-between p-4 bg-green-900/20 rounded-lg border border-green-500/20 hover:border-green-500/40 transition-colors cursor-pointer"
+                        >
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-green-500/20 rounded-lg">
                                     <MapPin size={16} className="text-green-400" />
@@ -269,7 +285,10 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-gray-900/20 rounded-lg border border-gray-500/20 hover:border-gray-500/40 transition-colors cursor-pointer">
+                        <div
+                            onClick={() => window.location.href = '/scanner'}
+                            className="flex items-center justify-between p-4 bg-gray-900/20 rounded-lg border border-gray-500/20 hover:border-gray-500/40 transition-colors cursor-pointer"
+                        >
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-gray-500/20 rounded-lg">
                                     <Trophy size={16} className="text-gray-300" />
@@ -284,7 +303,10 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-green-800/20 rounded-lg border border-green-400/20 hover:border-green-400/40 transition-colors cursor-pointer">
+                        <div
+                            onClick={() => window.location.href = '/garden'}
+                            className="flex items-center justify-between p-4 bg-green-800/20 rounded-lg border border-green-400/20 hover:border-green-400/40 transition-colors cursor-pointer"
+                        >
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-green-400/20 rounded-lg">
                                     <PawPrint size={16} className="text-green-300" />
@@ -369,19 +391,31 @@ export default function Dashboard() {
                     Quick Actions
                 </h3>
                 <div className="flex flex-wrap gap-4">
-                    <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
+                    <button
+                        onClick={() => window.location.href = '/scanner'}
+                        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95"
+                    >
                         <MapPin size={16} />
                         <span>Touch Grass</span>
                     </button>
-                    <button className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
+                    <button
+                        onClick={() => window.location.href = '/scanner'}
+                        className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95"
+                    >
                         <Trophy size={16} />
                         <span>Scan Area</span>
                     </button>
-                    <button className="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
+                    <button
+                        onClick={() => window.location.href = '/garden'}
+                        className="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95"
+                    >
                         <PawPrint size={16} />
                         <span>Visit Garden</span>
                     </button>
-                    <button className="flex items-center gap-2 bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
+                    <button
+                        onClick={() => window.location.href = '/staking'}
+                        className="flex items-center gap-2 bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95"
+                    >
                         <Coins size={16} />
                         <span>Stake Tokens</span>
                     </button>
@@ -532,13 +566,13 @@ export default function Dashboard() {
                             </div>
                             <div className="flex justify-between text-xs text-slate-400 mb-1">
                                 <span>Today's progress</span>
-                                <span>{Number(actualStats.grass_touch_streak) > 0 ? 'Complete!' : 'Pending'}</span>
+                                <span>{touchedGrassToday() ? 'Complete!' : 'Pending'}</span>
                             </div>
                             <div className="w-full bg-slate-700 rounded-full h-2">
                                 <div
-                                    className={`h-2 rounded-full transition-all duration-300 ${Number(actualStats.grass_touch_streak) > 0 ? 'bg-green-400' : 'bg-slate-600'
+                                    className={`h-2 rounded-full transition-all duration-300 ${touchedGrassToday() ? 'bg-green-400' : 'bg-slate-600'
                                         }`}
-                                    style={{ width: Number(actualStats.grass_touch_streak) > 0 ? '100%' : '0%' }}
+                                    style={{ width: touchedGrassToday() ? '100%' : '0%' }}
                                 />
                             </div>
                         </div>
@@ -619,7 +653,10 @@ export default function Dashboard() {
                         </div>
                         <p className="text-slate-400 mb-2">No activity yet</p>
                         <p className="text-sm text-slate-500">Start your WalkScape journey by touching grass!</p>
-                        <button className="mt-4 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors mx-auto">
+                        <button
+                            onClick={() => window.location.href = '/scanner'}
+                            className="mt-4 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors mx-auto"
+                        >
                             <MapPin size={16} />
                             <span>Touch Grass Now</span>
                         </button>

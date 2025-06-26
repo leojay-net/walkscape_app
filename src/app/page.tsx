@@ -22,7 +22,7 @@ export default function Home() {
 
   // Show registration modal when connected but not registered
   useEffect(() => {
-    if (isConnected && !isRegistered && !isLoading) {
+    if (!isLoading && isConnected && !isRegistered) {
       setShowRegistrationModal(true);
     } else {
       setShowRegistrationModal(false);

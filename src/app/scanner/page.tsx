@@ -11,7 +11,7 @@ export default function ScannerPage() {
     const [showRegistrationModal, setShowRegistrationModal] = useState(false);
     const router = useRouter();
 
-    // Redirect to home if not connected
+    // Only redirect after loading is complete
     useEffect(() => {
         if (!isLoading && !isConnected) {
             router.push('/');
@@ -20,7 +20,7 @@ export default function ScannerPage() {
 
     // Show registration modal when connected but not registered
     useEffect(() => {
-        if (isConnected && !isRegistered && !isLoading) {
+        if (!isLoading && isConnected && !isRegistered) {
             setShowRegistrationModal(true);
         } else {
             setShowRegistrationModal(false);

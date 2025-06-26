@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-    const { isConnected, isRegistered, address, disconnect } = useWallet();
+    const { isConnected, isRegistered, address, disconnect, isLoading } = useWallet();
     const pathname = usePathname();
     const router = useRouter();
 
@@ -21,7 +21,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const protectedRoutes = ['/dashboard', '/scanner', '/garden', '/colony', '/staking'];
     const isProtectedRoute = protectedRoutes.includes(pathname);
 
-    if (!isConnected || (isProtectedRoute && !isRegistered)) {
+    // Show loading or let pages handle their own loading states
+    if (isLoading || !isConnected || (isProtectedRoute && !isRegistered)) {
         return <>{children}</>;
     }
 
