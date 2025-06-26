@@ -829,9 +829,9 @@ export function generateLocationHash(lat: number, lng: number, artifactId?: stri
     const data = encoder.encode(locationString);
 
     // Create a simple hash by combining bytes (keeping it under 31 bytes)
-    let hash = 0n;
+    let hash = BigInt(0);
     for (let i = 0; i < Math.min(data.length, 30); i++) {
-        hash = (hash * 256n + BigInt(data[i])) % (2n ** 252n);
+        hash = (hash * BigInt(256) + BigInt(data[i])) % (BigInt(2) ** BigInt(252));
     }
 
     return '0x' + hash.toString(16);
