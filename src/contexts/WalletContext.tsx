@@ -25,6 +25,7 @@ interface WalletContextType {
     disconnect: () => Promise<void>;
     checkRegistration: () => Promise<void>;
     refreshPlayerStats: () => Promise<void>;
+    retryRegistrationCheck: () => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextType | null>(null);
@@ -39,6 +40,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     const [isClient, setIsClient] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
     const [initializationTimeout, setInitializationTimeout] = useState<NodeJS.Timeout | null>(null);
+
+    // Add retry mechanism for registration checks
+    const [registrationRetryCount, setRegistrationRetryCount] = useState(0);
+    const maxRegistrationRetries = 3;
 
     // Initialize client-side only modules
     useEffect(() => {
@@ -187,13 +192,57 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
                 setIsRegistered(false);
                 setPlayerStats(null);
             }
-        } catch (error) {
-            // If the contract call fails, it typically means the player is not registered
-            console.log('Player not registered - contract call failed:', error);
-            setIsRegistered(false);
-            setPlayerStats(null);
+        } catch (error: any) {
+            console.error('Error checking player registration:', error);
+
+            // Check if this is a network/RPC error vs a "player not found" error
+            const errorMessage = error?.message?.toLowerCase() || '';
+            const isNetworkError =
+                errorMessage.includes('network') ||
+                errorMessage.includes('timeout') ||
+                errorMessage.includes('connection') ||
+                errorMessage.includes('rpc') ||
+                errorMessage.includes('fetch') ||
+                error?.code === 'NETWORK_ERROR' ||
+                error?.name === 'NetworkError';
+
+            if (isNetworkError) {
+                console.log('Network error detected - maintaining previous registration state');
+                // Don't change registration status on network errors
+                // Keep the user logged in if they were previously registered
+                if (!isRegistered && !playerStats) {
+                    // Only set to false if we have no previous successful state
+                    console.log('No previous registration state - setting to false due to network error');
+                    setIsRegistered(false);
+                    setPlayerStats(null);
+                }
+            } else {
+                // This is likely a "player not found" error from the contract
+                console.log('Player not registered - contract returned player not found error');
+                setIsRegistered(false);
+                setPlayerStats(null);
+            }
         }
     };
+
+    const retryRegistrationCheck = async () => {
+        if (!address || registrationRetryCount >= maxRegistrationRetries) return;
+
+        setRegistrationRetryCount(prev => prev + 1);
+        console.log(`Retrying registration check (attempt ${registrationRetryCount + 1}/${maxRegistrationRetries})`);
+
+        // Add a small delay before retry
+        setTimeout(async () => {
+            await checkPlayerRegistration(address);
+        }, 1000 * registrationRetryCount); // Exponential backoff
+    };
+
+    // Reset retry count when registration succeeds
+    useEffect(() => {
+        if (isRegistered) {
+            setRegistrationRetryCount(0);
+        }
+    }, [isRegistered]);
 
     const checkRegistration = async () => {
         if (address) {
@@ -229,6 +278,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
                 disconnect: disconnectWallet,
                 checkRegistration,
                 refreshPlayerStats,
+                retryRegistrationCheck,
             }}
         >
             {children}

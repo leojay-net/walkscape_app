@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Custom animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
 :root {
   /* Nature-inspired color palette */
   --forest-dark: #1a2f1a;
