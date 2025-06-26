@@ -223,9 +223,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
                 };
             }
 
-            // Handle BigInt 0n case (likely an error response)
-            if (stats === 0n || stats === '0') {
-                console.log('Got 0n response - treating as unregistered player');
+            // Handle BigInt 0 case (likely an error response)
+            if (stats === BigInt(0) || stats === '0') {
+                console.log('Got BigInt(0) response - treating as unregistered player');
                 setIsRegistered(false);
                 setPlayerStats(null);
                 return;
@@ -322,7 +322,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
                 // Use the same parsing logic as checkPlayerRegistration
                 let parsedStats: PlayerStats | null = null;
 
-                if (stats === null || stats === undefined || stats === 0n || stats === '0') {
+                if (stats === null || stats === undefined || stats === BigInt(0) || stats === '0') {
                     console.log('No valid stats in refresh, keeping current state');
                     return;
                 }
