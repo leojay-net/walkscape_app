@@ -32,17 +32,17 @@ export default function LandingPage() {
             description: "Turn every walk into an adventure. Discover hidden artifacts and unlock new biomes as you explore the real world."
         },
         {
-            icon: <TreePine className="w-8 h-8 text-blue-400" />,
+            icon: <TreePine className="w-8 h-8 text-green-300" />,
             title: "Collect Companions",
             description: "Find and nurture magical pets that accompany you on your journey. Each companion has unique abilities and traits."
         },
         {
-            icon: <Users className="w-8 h-8 text-purple-400" />,
+            icon: <Users className="w-8 h-8 text-gray-300" />,
             title: "Build Communities",
             description: "Join or create colonies with other explorers. Share resources, plan expeditions, and grow together."
         },
         {
-            icon: <Coins className="w-8 h-8 text-yellow-400" />,
+            icon: <Coins className="w-8 h-8 text-white" />,
             title: "Earn & Stake",
             description: "Stake your tokens for growth rewards. The more you walk and explore, the more you earn."
         }
@@ -104,7 +104,7 @@ export default function LandingPage() {
                             <h1 className="text-5xl lg:text-7xl font-bold mb-6">
                                 <span className="block text-white">Explore.</span>
                                 <span className="block text-green-400">Discover.</span>
-                                <span className="block text-blue-400">Earn.</span>
+                                <span className="block text-gray-300">Earn.</span>
                             </h1>
 
                             <p className="text-xl text-slate-300 mb-8 max-w-2xl">
@@ -214,8 +214,8 @@ export default function LandingPage() {
                                 <div
                                     key={index}
                                     className={`p-6 rounded-2xl border cursor-pointer transition-all duration-300 ${activeFeature === index
-                                            ? 'bg-slate-800 border-green-500 shadow-lg shadow-green-500/20'
-                                            : 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
+                                        ? 'bg-slate-800 border-green-500 shadow-lg shadow-green-500/20'
+                                        : 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
                                         }`}
                                     onClick={() => setActiveFeature(index)}
                                 >

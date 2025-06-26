@@ -136,16 +136,16 @@ export default function Garden() {
 
     const getPetTypeInfo = (petType: number) => {
         const types = [
-            { name: 'Plant', emoji: '🌱', color: 'green' },
-            { name: 'Creature', emoji: '🐾', color: 'blue' },
-            { name: 'Digital Companion', emoji: '🤖', color: 'purple' }
+            { name: 'Plant', icon: 'Plant', color: 'green' },
+            { name: 'Creature', icon: 'Creature', color: 'gray' },
+            { name: 'Digital Companion', icon: 'Digital', color: 'gray' }
         ];
         return types[petType] || types[0];
     };
 
     const getArtifactInfo = (artifactId: string) => {
         // Simulate artifact data based on ID
-        const types = ['🍄 Mushroom', '🦴 Fossil', '🎨 Graffiti', '🌱 Pixel Plant'];
+        const types = ['Mushroom', 'Fossil', 'Graffiti', 'Pixel Plant'];
         const typeIndex = parseInt(artifactId) % 4;
         const rarity = Math.floor(Math.random() * 5) + 1;
 
@@ -228,24 +228,27 @@ export default function Garden() {
 
                         <div className="grid grid-cols-3 gap-2 mb-4">
                             {[
-                                { type: PetType.PLANT, name: 'Plant', emoji: '🌱' },
-                                { type: PetType.CREATURE, name: 'Creature', emoji: '🐾' },
-                                { type: PetType.DIGITAL_COMPANION, name: 'Digital', emoji: '🤖' }
-                            ].map((pet) => (
-                                <button
-                                    key={pet.type}
-                                    onClick={() => handleMintPet(pet.type)}
-                                    disabled={!canMintPet() || isMinting}
-                                    className="pet-card p-3 text-center disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    <div className="text-2xl mb-1">{pet.emoji}</div>
-                                    <div className="text-xs">{pet.name}</div>
-                                </button>
-                            ))}
+                                { type: PetType.PLANT, name: 'Plant', icon: Flower2 },
+                                { type: PetType.CREATURE, name: 'Creature', icon: PawPrint },
+                                { type: PetType.DIGITAL_COMPANION, name: 'Digital', icon: Trophy }
+                            ].map((pet) => {
+                                const IconComponent = pet.icon;
+                                return (
+                                    <button
+                                        key={pet.type}
+                                        onClick={() => handleMintPet(pet.type)}
+                                        disabled={!canMintPet() || isMinting}
+                                        className="pet-card p-3 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <IconComponent size={24} className="mx-auto mb-1 text-green-400" />
+                                        <div className="text-xs">{pet.name}</div>
+                                    </button>
+                                );
+                            })}
                         </div>
 
                         {!canMintPet() && (
-                            <p className="text-xs text-amber-400 text-center">
+                            <p className="text-xs text-gray-300 text-center">
                                 Need {100 - (playerStats ? Number(playerStats.walks_xp) : 0)} more XP to mint
                             </p>
                         )}
@@ -264,7 +267,11 @@ export default function Garden() {
                                     <div key={pet.id} className="pet-card">
                                         <div className="flex items-center justify-between mb-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="text-2xl">{petInfo.emoji}</div>
+                                                <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                                                    {petInfo.icon === 'Plant' && <Flower2 size={20} className="text-white" />}
+                                                    {petInfo.icon === 'Creature' && <PawPrint size={20} className="text-white" />}
+                                                    {petInfo.icon === 'Digital' && <Trophy size={20} className="text-white" />}
+                                                </div>
                                                 <div>
                                                     <h4 className="font-medium">{petInfo.name} #{pet.id}</h4>
                                                     <p className="text-xs text-slate-400">Level {Number(pet.level)}</p>
@@ -272,11 +279,11 @@ export default function Garden() {
                                             </div>
                                             <div className="text-right">
                                                 <div className="flex items-center gap-1 mb-1">
-                                                    <Heart size={12} className="text-red-400" />
+                                                    <Heart size={12} className="text-gray-400" />
                                                     <span className="text-sm">{Number(pet.happiness)}%</span>
                                                 </div>
                                                 <div className="flex items-center gap-1">
-                                                    <Star size={12} className="text-yellow-400" />
+                                                    <Star size={12} className="text-gray-300" />
                                                     <span className="text-xs">Stage {pet.evolution_stage}</span>
                                                 </div>
                                             </div>
@@ -324,7 +331,9 @@ export default function Garden() {
                                 return (
                                     <div key={artifactId} className="artifact-card artifact-mushroom p-4">
                                         <div className="text-center">
-                                            <div className="text-2xl mb-2">{artifact.name.split(' ')[0]}</div>
+                                            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                                                <Trophy size={16} className="text-white" />
+                                            </div>
                                             <h4 className="font-medium text-sm mb-1">{artifact.name}</h4>
                                             <div className="flex items-center justify-center gap-1">
                                                 {[...Array(artifact.rarity)].map((_, i) => (

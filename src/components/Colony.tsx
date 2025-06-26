@@ -60,19 +60,44 @@ export default function Colony() {
     }
 
     const loadColonyData = useCallback(async () => {
-        if (!account?.address || !playerStats) {
+        console.log('=== loadColonyData called ===');
+        console.log('account?.address:', account?.address);
+        console.log('playerStats:', playerStats);
+        console.log('playerStats?.current_colony:', playerStats?.current_colony);
+
+        if (!account?.address) {
+            console.log('No account address, returning');
+            setIsLoading(false);
+            return;
+        }
+
+        if (!playerStats) {
+            console.log('No playerStats available, returning');
             setIsLoading(false);
             return;
         }
 
         setIsLoading(true);
         setError(null);
+        console.log('Loading colony data for player stats:', playerStats);
+        console.log('Current colony bigint value:', playerStats.current_colony);
+        console.log('Current colony as number:', Number(playerStats.current_colony));
+
         try {
-            const colonyId = Number(playerStats.current_colony);
-            if (colonyId > 0) {
+            // Handle both bigint and number cases properly
+            const colonyIdBigInt = BigInt(playerStats.current_colony);
+            const colonyId = Number(colonyIdBigInt);
+
+            console.log('Colony ID BigInt:', colonyIdBigInt);
+            console.log('Colony ID Number:', colonyId);
+
+            if (colonyIdBigInt > BigInt(0)) {
+                console.log('Player is in colony:', colonyId, 'fetching colony stats...');
                 const contract = getContract();
-                const colonyStats = await contract.get_colony_stats(BigInt(colonyId));
-                setColony({
+                const colonyStats = await contract.get_colony_stats(colonyIdBigInt);
+                console.log('Colony stats retrieved:', colonyStats);
+
+                const colonyData = {
                     id: colonyId.toString(),
                     name: felt252ToString(colonyStats.name),
                     creator: colonyStats.creator,
@@ -80,17 +105,21 @@ export default function Colony() {
                     total_xp: colonyStats.total_xp,
                     created_at: colonyStats.created_at,
                     weekly_challenge_score: colonyStats.weekly_challenge_score
-                });
+                };
+                console.log('Processed colony data:', colonyData);
+                setColony(colonyData);
             } else {
+                console.log('Player is not in any colony (colony ID is 0)');
                 setColony(null);
             }
         } catch (error) {
             console.error('Failed to load colony data:', error);
+            setError('Failed to load colony information. This might be a network issue.');
             setColony(null);
         } finally {
             setIsLoading(false);
         }
-    }, [account?.address, playerStats?.current_colony]);
+    }, [account?.address, playerStats]);
 
     const loadCreatedColonies = useCallback(async () => {
         if (!account?.address || !address) return;
@@ -170,9 +199,20 @@ export default function Colony() {
     }, [account?.address]);
 
     useEffect(() => {
-        loadColonyData();
-        loadCreatedColonies();
-    }, [loadColonyData, loadCreatedColonies]);
+        console.log('Colony useEffect triggered with:', {
+            account: account?.address,
+            playerStats: playerStats,
+            isRegistered
+        });
+
+        if (isRegistered && account?.address) {
+            console.log('Calling loadColonyData and loadCreatedColonies...');
+            loadColonyData();
+            loadCreatedColonies();
+        } else {
+            console.log('Skipping colony data load - not ready yet');
+        }
+    }, [loadColonyData, loadCreatedColonies, isRegistered, account?.address]);
 
     useEffect(() => {
         if (activeTab === 'discover') {
@@ -188,16 +228,22 @@ export default function Colony() {
         try {
             const contract = getContract(account);
             const colonyNameFelt = stringToFelt252(newColonyName.trim());
-            await contract.create_colony(colonyNameFelt);
+            console.log('Creating colony with name:', newColonyName.trim());
+            console.log('Colony name as felt252:', colonyNameFelt);
 
-            // Refresh data after creation
-            setTimeout(() => {
-                refreshPlayerStats();
-                loadColonyData();
-                loadCreatedColonies();
+            await contract.create_colony(colonyNameFelt);
+            console.log('Colony created successfully');
+
+            // Refresh data after creation with more comprehensive refresh
+            setTimeout(async () => {
+                console.log('Refreshing all data after colony creation...');
+                await refreshPlayerStats();
+                await loadColonyData();
+                await loadCreatedColonies();
                 setIsCreating(false);
                 setNewColonyName('');
                 setError(null);
+                setActiveTab('my-colony'); // Switch to my-colony tab to see the new colony
             }, 3000);
         } catch (error: any) {
             console.error('Failed to create colony:', error);
@@ -210,6 +256,8 @@ export default function Colony() {
                 errorMessage = 'A colony with this name already exists. Please choose a different name.';
             } else if (error?.message?.includes('Invalid name')) {
                 errorMessage = 'Invalid colony name. Please use only letters, numbers, and spaces.';
+            } else if (error?.message?.includes('execution was reverted')) {
+                errorMessage = 'Transaction failed. You might already be in a colony or there was a contract error.';
             }
 
             setError(errorMessage);
@@ -283,8 +331,12 @@ export default function Colony() {
         }
     };
 
-    const formatAddress = (addr: string) => {
-        return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+    const formatAddress = (addr: string | bigint) => {
+        // Convert BigInt to hex string if needed
+        const addressStr = typeof addr === 'bigint'
+            ? `0x${addr.toString(16).padStart(64, '0')}`
+            : addr;
+        return `${addressStr.slice(0, 6)}...${addressStr.slice(-4)}`;
     };
 
     const formatXP = (xp: bigint) => {
@@ -310,22 +362,23 @@ export default function Colony() {
         <div className="space-y-6">
             {/* Header */}
             <div className="text-center">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
+                <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
                     <Users size={32} className="text-white" />
                 </div>
                 <h2 className="text-xl font-bold mb-2">Colonies</h2>
                 <p className="text-slate-400 text-sm">
                     Connect with fellow explorers
                 </p>
+
             </div>
 
             {/* Error Display */}
             {error && (
-                <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 text-red-200">
+                <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 text-gray-200">
                     <p className="text-sm">{error}</p>
                     <button
                         onClick={() => setError(null)}
-                        className="mt-2 text-xs text-red-400 hover:text-red-300 underline"
+                        className="mt-2 text-xs text-gray-400 hover:text-gray-300 underline"
                     >
                         Dismiss
                     </button>
@@ -337,7 +390,7 @@ export default function Colony() {
                 <button
                     onClick={() => setActiveTab('my-colony')}
                     className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === 'my-colony'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-green-600 text-white'
                         : 'text-slate-400 hover:text-white'
                         }`}
                 >
@@ -347,7 +400,7 @@ export default function Colony() {
                 <button
                     onClick={() => setActiveTab('discover')}
                     className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === 'discover'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-green-600 text-white'
                         : 'text-slate-400 hover:text-white'
                         }`}
                 >
@@ -366,13 +419,13 @@ export default function Colony() {
                                 <div className="flex items-center justify-between mb-4">
                                     <div>
                                         <h3 className="text-lg font-bold flex items-center gap-2">
-                                            {colony.creator === address && <Crown size={16} className="text-yellow-400" />}
+                                            {colony.creator === address && <Crown size={16} className="text-gray-300" />}
                                             {colony.name}
                                         </h3>
                                         <p className="text-sm text-slate-400">Colony #{colony.id}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xl font-bold text-blue-400">
+                                        <p className="text-xl font-bold text-green-400">
                                             Level {getColonyLevel(colony.total_xp)}
                                         </p>
                                         <p className="text-xs text-slate-400">
@@ -384,7 +437,7 @@ export default function Colony() {
                                 <div className="grid grid-cols-2 gap-4 mb-4">
                                     <div className="stat-card">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Users size={14} className="text-blue-400" />
+                                            <Users size={14} className="text-green-400" />
                                             <span className="text-sm">Members</span>
                                         </div>
                                         <p className="text-lg font-bold">{Number(colony.member_count)}</p>
@@ -392,7 +445,7 @@ export default function Colony() {
 
                                     <div className="stat-card">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Trophy size={14} className="text-yellow-400" />
+                                            <Trophy size={14} className="text-gray-300" />
                                             <span className="text-sm">Weekly Score</span>
                                         </div>
                                         <p className="text-lg font-bold">{Number(colony.weekly_challenge_score)}</p>
@@ -413,7 +466,7 @@ export default function Colony() {
                                 {colony.creator !== address && (
                                     <button
                                         onClick={handleLeaveColony}
-                                        className="btn-secondary w-full mt-4 flex items-center justify-center gap-2 text-red-400 hover:text-red-300"
+                                        className="btn-secondary w-full mt-4 flex items-center justify-center gap-2 text-gray-400 hover:text-gray-300"
                                     >
                                         <LogOut size={16} />
                                         Leave Colony
@@ -425,7 +478,7 @@ export default function Colony() {
                             {createdColonies.length > 0 && (
                                 <div className="card">
                                     <h4 className="font-bold mb-3 flex items-center gap-2">
-                                        <Crown size={16} className="text-yellow-400" />
+                                        <Crown size={16} className="text-gray-300" />
                                         Colonies You Created
                                     </h4>
                                     {isLoadingCreated ? (
@@ -439,7 +492,7 @@ export default function Colony() {
                                                 <div key={createdColony.id} className="bg-slate-700 rounded-lg p-3">
                                                     <div className="flex items-center justify-between mb-2">
                                                         <h5 className="font-semibold flex items-center gap-1">
-                                                            <Crown size={14} className="text-yellow-400" />
+                                                            <Crown size={14} className="text-gray-300" />
                                                             {createdColony.name}
                                                         </h5>
                                                         <span className="text-xs text-slate-400">#{createdColony.id}</span>
@@ -482,7 +535,10 @@ export default function Colony() {
 
                             {/* Colony Benefits */}
                             <div className="card">
-                                <h4 className="font-bold mb-3">🎁 Colony Benefits</h4>
+                                <h4 className="font-bold mb-3 flex items-center gap-2">
+                                    <Trophy size={16} className="text-green-400" />
+                                    Colony Benefits
+                                </h4>
                                 <div className="space-y-2 text-sm text-slate-300">
                                     <p>• Shared XP pool boosts individual rewards</p>
                                     <p>• Weekly challenges and competitions</p>
@@ -497,7 +553,7 @@ export default function Colony() {
                             {createdColonies.length > 0 && (
                                 <div className="card">
                                     <h4 className="font-bold mb-3 flex items-center gap-2">
-                                        <Crown size={16} className="text-yellow-400" />
+                                        <Crown size={16} className="text-gray-300" />
                                         Colonies You Created
                                     </h4>
                                     {isLoadingCreated ? (
@@ -511,7 +567,7 @@ export default function Colony() {
                                                 <div key={createdColony.id} className="bg-slate-700 rounded-lg p-3">
                                                     <div className="flex items-center justify-between mb-2">
                                                         <h5 className="font-semibold flex items-center gap-1">
-                                                            <Crown size={14} className="text-yellow-400" />
+                                                            <Crown size={14} className="text-gray-300" />
                                                             {createdColony.name}
                                                         </h5>
                                                         <span className="text-xs text-slate-400">#{createdColony.id}</span>
@@ -628,7 +684,7 @@ export default function Colony() {
                                         placeholder="Colony ID..."
                                         value={joinColonyId}
                                         onChange={(e) => setJoinColonyId(e.target.value)}
-                                        className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                                        className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-green-500"
                                     />
 
                                     <button
@@ -656,7 +712,8 @@ export default function Colony() {
                     {/* Popular Colonies */}
                     <div className="card">
                         <h3 className="font-bold mb-3 flex items-center gap-2">
-                            🔥 Popular Colonies
+                            <Trophy size={16} className="text-green-400" />
+                            Popular Colonies
                             {isLoadingPopular && <Loader2 size={16} className="animate-spin" />}
                         </h3>
                         {isLoadingPopular ? (
@@ -700,7 +757,10 @@ export default function Colony() {
 
                     {/* Tips */}
                     <div className="card">
-                        <h3 className="font-bold mb-3">💡 Colony Tips</h3>
+                        <h3 className="font-bold mb-3 flex items-center gap-2">
+                            <Trophy size={16} className="text-gray-300" />
+                            Colony Tips
+                        </h3>
                         <div className="space-y-2 text-sm text-slate-400">
                             <p>• Colonies can have up to 50 members</p>
                             <p>• All member XP contributes to colony level</p>

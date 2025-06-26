@@ -9,7 +9,8 @@ import {
     Loader2,
     CheckCircle,
     AlertCircle,
-    UserPlus
+    UserPlus,
+    Flower2
 } from 'lucide-react';
 
 interface WalletConnectionProps {
@@ -59,7 +60,7 @@ export default function WalletConnection({ showRegistration = false }: WalletCon
 
             setRegistrationResult({
                 success: true,
-                message: '🎉 Welcome to WalkScape! Your adventure begins now.'
+                message: 'Welcome to WalkScape! Your adventure begins now.'
             });
 
             // Check registration status after a delay
@@ -189,7 +190,10 @@ export default function WalletConnection({ showRegistration = false }: WalletCon
                 </div>
 
                 <div className="mt-6 p-3 bg-slate-800/50 rounded-lg">
-                    <h3 className="font-medium mb-2 text-green-400">🌱 What is WalkScape?</h3>
+                    <h3 className="font-medium mb-2 text-green-400 flex items-center gap-2">
+                        <Flower2 size={16} />
+                        What is WalkScape?
+                    </h3>
                     <div className="space-y-1 text-xs text-slate-300">
                         <p>• Explore real-world locations and claim artifacts</p>
                         <p>• Touch grass daily to build XP streaks</p>

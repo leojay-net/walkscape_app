@@ -2,22 +2,22 @@
 
 A mobile-first social exploration game built on Starknet where users collect real-world locations, grow digital biomes, and participate in social colonies.
 
-## 🌟 Features
+## Features
 
 ### Core Game Mechanics
-- **🌱 Touch Grass**: Check-in at outdoor locations to earn XP and maintain streaks
-- **🏛️ Scan & Discover**: Claim location-based artifacts (Mushrooms, Fossils, Graffiti, Pixel Plants)
-- **🐾 Digital Pets**: Mint, feed, and evolve pets in your personal biome
-- **🤝 Social Colonies**: Join or create colonies with other players
-- **💎 Growth Staking**: Stake tokens to grow legendary pets with special traits
+- **Touch Grass**: Check-in at outdoor locations to earn XP and maintain streaks
+- **Scan & Discover**: Claim location-based artifacts (Mushrooms, Fossils, Graffiti, Pixel Plants)
+- **Digital Pets**: Mint, feed, and evolve pets in your personal biome
+- **Social Colonies**: Join or create colonies with other players
+- **Growth Staking**: Stake tokens to grow legendary pets with special traits
 
 ### Technical Features
 - **Starknet Integration**: Full smart contract interaction via Starknet wallets
 - **Mobile-First Design**: Responsive UI optimized for mobile exploration
-- **Nature-Inspired UI**: Earth tones and green color scheme without gradients
+- **Professional UI**: Clean design with green, white, and gray color scheme
 - **Real-time Updates**: Live stats and game state synchronization
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+ and npm
@@ -47,7 +47,7 @@ A mobile-first social exploration game built on Starknet where users collect rea
 
 4. **Open app**: Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 🎮 How to Play
+## How to Play
 
 ### Getting Started
 1. **Connect Wallet**: Connect your Starknet wallet (ArgentX/Braavos)
@@ -70,7 +70,7 @@ A mobile-first social exploration game built on Starknet where users collect rea
 - **Artifact Trading**: Collect rare location-based NFTs
 - **Streak Building**: Maintain daily check-ins for bonus rewards
 
-## 🏗️ Architecture
+## Architecture
 
 ### Smart Contract Integration
 ```typescript
@@ -104,7 +104,7 @@ src/
 - **get-starknet**: Wallet connection
 - **Lucide React**: Icon library
 
-## 🎨 Design System
+## Design System
 
 ### Color Palette
 - **Forest Dark**: Primary background (#1a2f1a)
@@ -123,14 +123,14 @@ src/
 .pet-card          /* Pet management */
 ```
 
-## 📱 Mobile Optimization
+## Mobile Optimization
 
 - **Responsive Design**: Optimized for 375px+ screens
 - **Touch-Friendly**: Large tap targets and gestures
 - **Location Services**: GPS integration for real-world mechanics
 - **Offline Support**: Cached data for intermittent connectivity
 
-## 🔧 Configuration
+## Configuration
 
 ### Contract ABI
 The contract ABI is defined in `src/lib/starknet.ts` and includes all WalkScape game functions:
@@ -146,7 +146,7 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=0x...  # Deployed contract
 NEXT_PUBLIC_RPC_URL=https://...     # Starknet RPC endpoint
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Vercel (Recommended)
 ```bash

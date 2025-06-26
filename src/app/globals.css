@@ -16,18 +16,18 @@
 }
 
 :root {
-  /* Nature-inspired color palette */
+  /* Professional color palette - Green, White, Gray focus */
   --forest-dark: #1a2f1a;
   --forest-green: #2d5a2d;
   --forest-light: #4a7c59;
   --grass-green: #6b8e23;
   --leaf-green: #9acd32;
-  --earth-brown: #8b4513;
-  --stone-gray: #696969;
-  --water-blue: #4682b4;
-  --sky-blue: #87ceeb;
-  --sun-yellow: #ffd700;
-  --bark-brown: #8b7355;
+  --earth-gray: #696969;
+  --stone-gray: #808080;
+  --light-gray: #a8a8a8;
+  --dark-gray: #2a2a2a;
+  --charcoal: #36454f;
+  --silver: #c0c0c0;
   --moss-green: #addfad;
 }
 
@@ -69,11 +69,11 @@
   }
 
   .earth-accent {
-    @apply text-amber-600;
+    @apply text-gray-400;
   }
 
   .water-accent {
-    @apply text-blue-400;
+    @apply text-gray-300;
   }
 
   .navigation-tab {
@@ -97,19 +97,19 @@
   }
 
   .artifact-mushroom {
-    @apply border-amber-500/50 bg-amber-900/20 hover:border-amber-400;
+    @apply border-green-500/50 bg-green-900/20 hover:border-green-400;
   }
 
   .artifact-fossil {
-    @apply border-stone-500/50 bg-stone-900/20 hover:border-stone-400;
+    @apply border-gray-500/50 bg-gray-900/20 hover:border-gray-400;
   }
 
   .artifact-graffiti {
-    @apply border-purple-500/50 bg-purple-900/20 hover:border-purple-400;
+    @apply border-green-600/50 bg-green-800/20 hover:border-green-500;
   }
 
   .artifact-pixel {
-    @apply border-cyan-500/50 bg-cyan-900/20 hover:border-cyan-400;
+    @apply border-gray-600/50 bg-gray-800/20 hover:border-gray-500;
   }
 
   .pet-card {
@@ -121,19 +121,19 @@
   }
 
   .rarity-uncommon {
-    @apply text-green-400;
+    @apply text-gray-300;
   }
 
   .rarity-rare {
-    @apply text-blue-400;
+    @apply text-green-400;
   }
 
   .rarity-epic {
-    @apply text-purple-400;
+    @apply text-green-300;
   }
 
   .rarity-legendary {
-    @apply text-yellow-400;
+    @apply text-white;
   }
 
   /* Landing page specific styles */

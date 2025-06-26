@@ -11,7 +11,8 @@ import {
     Loader2,
     Calendar,
     Star,
-    PawPrint
+    PawPrint,
+    AlertCircle
 } from 'lucide-react';
 
 export default function Staking() {
@@ -93,7 +94,7 @@ export default function Staking() {
                 setIsHarvesting(false);
 
                 // Show success message with pet ID
-                alert(`🎉 Harvested! New pet ID: ${rewardPetId}`);
+                alert(`Harvested! New pet ID: ${rewardPetId}`);
             }, 3000);
         } catch (error) {
             console.error('Failed to harvest:', error);
@@ -103,10 +104,10 @@ export default function Staking() {
 
     const getStakeTier = (amount: bigint) => {
         const amt = Number(amount);
-        if (amt >= 1000) return { tier: 'Legendary', multiplier: 300, color: 'text-yellow-400' };
-        if (amt >= 500) return { tier: 'Epic', multiplier: 200, color: 'text-purple-400' };
-        if (amt >= 100) return { tier: 'Rare', multiplier: 150, color: 'text-blue-400' };
-        if (amt >= 50) return { tier: 'Common', multiplier: 100, color: 'text-gray-400' };
+        if (amt >= 1000) return { tier: 'Legendary', multiplier: 300, color: 'text-gray-300' };
+        if (amt >= 500) return { tier: 'Epic', multiplier: 200, color: 'text-gray-400' };
+        if (amt >= 100) return { tier: 'Rare', multiplier: 150, color: 'text-green-400' };
+        if (amt >= 50) return { tier: 'Common', multiplier: 100, color: 'text-gray-500' };
         return { tier: 'None', multiplier: 0, color: 'text-slate-400' };
     };
 
@@ -162,7 +163,7 @@ export default function Staking() {
         <div className="space-y-6">
             {/* Header */}
             <div className="text-center">
-                <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
+                <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
                     <TrendingUp size={32} className="text-white" />
                 </div>
                 <h2 className="text-xl font-bold mb-2">Growth Staking</h2>
@@ -194,7 +195,7 @@ export default function Staking() {
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="stat-card">
                             <div className="flex items-center gap-2 mb-1">
-                                <Star size={14} className="text-yellow-400" />
+                                <Star size={14} className="text-gray-300" />
                                 <span className="text-sm">Multiplier</span>
                             </div>
                             <p className="text-lg font-bold">{currentTier?.multiplier}%</p>
@@ -202,14 +203,14 @@ export default function Staking() {
 
                         <div className="stat-card">
                             <div className="flex items-center gap-2 mb-1">
-                                <Clock size={14} className="text-blue-400" />
+                                <Clock size={14} className="text-gray-400" />
                                 <span className="text-sm">Status</span>
                             </div>
                             <p className="text-sm font-medium">
                                 {canHarvest() ? (
                                     <span className="text-green-400">Ready!</span>
                                 ) : timeUntilHarvest ? (
-                                    <span className="text-amber-400">{timeUntilHarvest}</span>
+                                    <span className="text-gray-300">{timeUntilHarvest}</span>
                                 ) : (
                                     <span className="text-slate-400">Staking...</span>
                                 )}
@@ -258,7 +259,7 @@ export default function Staking() {
                             placeholder="Amount to stake..."
                             value={stakeAmount}
                             onChange={(e) => setStakeAmount(e.target.value)}
-                            className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+                            className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-green-500"
                             min="1"
                         />
 
@@ -285,13 +286,16 @@ export default function Staking() {
 
             {/* Staking Tiers */}
             <div className="card">
-                <h3 className="font-bold mb-4">🏆 Staking Tiers</h3>
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                    <Star size={16} className="text-gray-300" />
+                    Staking Tiers
+                </h3>
                 <div className="space-y-3">
                     {[
-                        { amount: '50+', tier: 'Common', multiplier: '100%', color: 'text-gray-400' },
-                        { amount: '100+', tier: 'Rare', multiplier: '150%', color: 'text-blue-400' },
-                        { amount: '500+', tier: 'Epic', multiplier: '200%', color: 'text-purple-400' },
-                        { amount: '1000+', tier: 'Legendary', multiplier: '300%', color: 'text-yellow-400' },
+                        { amount: '50+', tier: 'Common', multiplier: '100%', color: 'text-gray-500' },
+                        { amount: '100+', tier: 'Rare', multiplier: '150%', color: 'text-green-400' },
+                        { amount: '500+', tier: 'Epic', multiplier: '200%', color: 'text-gray-400' },
+                        { amount: '1000+', tier: 'Legendary', multiplier: '300%', color: 'text-gray-300' },
                     ].map((tier) => (
                         <div key={tier.tier} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
                             <div className="flex items-center gap-3">
@@ -313,21 +317,24 @@ export default function Staking() {
             {/* Rewards Info */}
             <div className="card">
                 <h3 className="font-bold mb-3 flex items-center gap-2">
-                    <PawPrint size={16} />
+                    <PawPrint size={16} className="text-green-400" />
                     Legendary Pet Rewards
                 </h3>
                 <div className="space-y-2 text-sm text-slate-300">
-                    <p>• 🔥 Special traits based on staking tier</p>
-                    <p>• ⚡ Enhanced evolution capabilities</p>
-                    <p>• 🎨 Unique visual characteristics</p>
-                    <p>• 💎 Increased trading value</p>
-                    <p>• 🌟 Exclusive battle advantages</p>
+                    <p>• Special traits based on staking tier</p>
+                    <p>• Enhanced evolution capabilities</p>
+                    <p>• Unique visual characteristics</p>
+                    <p>• Increased trading value</p>
+                    <p>• Exclusive battle advantages</p>
                 </div>
             </div>
 
             {/* Important Notes */}
-            <div className="card border-amber-500/20 bg-amber-900/10">
-                <h3 className="font-bold mb-3 text-amber-400">⚠️ Important</h3>
+            <div className="card border-gray-500/20 bg-gray-900/10">
+                <h3 className="font-bold mb-3 text-gray-300 flex items-center gap-2">
+                    <AlertCircle size={16} />
+                    Important
+                </h3>
                 <div className="space-y-2 text-sm text-slate-300">
                     <p>• Minimum staking period: 1 week</p>
                     <p>• Tokens are locked during staking period</p>

@@ -33,7 +33,7 @@ export default function WalletConnection({ showRegistration = false }: WalletCon
 
             setRegistrationResult({
                 success: true,
-                message: '🎉 Welcome to WalkScape! Your adventure begins now.'
+                message: 'Welcome to WalkScape! Your adventure begins now.'
             });
 
             // Check registration status after a delay

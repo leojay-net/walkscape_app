@@ -178,20 +178,80 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
             // Use provider for read-only call
             const contract = getContract(); // This uses provider for read calls
             const stats = await contract.get_player_stats(playerAddress);
-            console.log('Player stats retrieved:', stats);
+            console.log('Raw player stats retrieved:', stats);
+            console.log('Stats type:', typeof stats);
+            console.log('Stats constructor:', stats?.constructor?.name);
 
-            // If we get any response (including 0n), player is registered
-            // The contract only returns data for registered players
-            if (stats !== null && stats !== undefined) {
-                setPlayerStats(stats as PlayerStats);
-                setIsRegistered(true);
-                console.log('Player is registered with stats:', stats);
-            } else {
-                // If we get null/undefined, player is not registered
+            // Handle different response formats from Starknet.js
+            let parsedStats: PlayerStats | null = null;
+
+            if (stats === null || stats === undefined) {
                 console.log('Player not registered - no stats returned');
                 setIsRegistered(false);
                 setPlayerStats(null);
+                return;
             }
+
+            // Check if stats is already a proper object
+            if (typeof stats === 'object' && !Array.isArray(stats)) {
+                // Check if it has the expected properties
+                if ('walks_xp' in stats && 'current_colony' in stats) {
+                    console.log('Stats is already a proper object:', stats);
+                    parsedStats = {
+                        walks_xp: BigInt(stats.walks_xp || 0),
+                        health_score: BigInt(stats.health_score || 0),
+                        last_checkin: BigInt(stats.last_checkin || 0),
+                        total_artifacts: BigInt(stats.total_artifacts || 0),
+                        current_colony: BigInt(stats.current_colony || 0),
+                        pets_owned: BigInt(stats.pets_owned || 0),
+                        grass_touch_streak: BigInt(stats.grass_touch_streak || 0),
+                    };
+                }
+            }
+
+            // Handle array format (structured response)
+            if (Array.isArray(stats) && stats.length === 7) {
+                console.log('Stats is an array, converting to object:', stats);
+                parsedStats = {
+                    walks_xp: BigInt(stats[0] || 0),
+                    health_score: BigInt(stats[1] || 0),
+                    last_checkin: BigInt(stats[2] || 0),
+                    total_artifacts: BigInt(stats[3] || 0),
+                    current_colony: BigInt(stats[4] || 0),
+                    pets_owned: BigInt(stats[5] || 0),
+                    grass_touch_streak: BigInt(stats[6] || 0),
+                };
+            }
+
+            // Handle BigInt 0n case (likely an error response)
+            if (stats === 0n || stats === '0') {
+                console.log('Got 0n response - treating as unregistered player');
+                setIsRegistered(false);
+                setPlayerStats(null);
+                return;
+            }
+
+            // Try to parse if it's a string
+            if (typeof stats === 'string') {
+                try {
+                    const parsed = JSON.parse(stats);
+                    console.log('Parsed string stats:', parsed);
+                    // Handle parsed object...
+                } catch (e) {
+                    console.log('Failed to parse stats string:', e);
+                }
+            }
+
+            if (parsedStats) {
+                console.log('Final parsed stats:', parsedStats);
+                setPlayerStats(parsedStats);
+                setIsRegistered(true);
+            } else {
+                console.log('Could not parse stats, treating as unregistered');
+                setIsRegistered(false);
+                setPlayerStats(null);
+            }
+
         } catch (error: any) {
             console.error('Error checking player registration:', error);
 
@@ -256,8 +316,49 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
             try {
                 const contract = getContract(); // Use provider for read calls
                 const stats = await contract.get_player_stats(address);
-                console.log('Refreshed stats:', stats);
-                setPlayerStats(stats as PlayerStats);
+                console.log('Raw refreshed stats:', stats);
+                console.log('Refresh stats type:', typeof stats);
+
+                // Use the same parsing logic as checkPlayerRegistration
+                let parsedStats: PlayerStats | null = null;
+
+                if (stats === null || stats === undefined || stats === 0n || stats === '0') {
+                    console.log('No valid stats in refresh, keeping current state');
+                    return;
+                }
+
+                // Check if stats is already a proper object
+                if (typeof stats === 'object' && !Array.isArray(stats) && 'walks_xp' in stats) {
+                    parsedStats = {
+                        walks_xp: BigInt(stats.walks_xp || 0),
+                        health_score: BigInt(stats.health_score || 0),
+                        last_checkin: BigInt(stats.last_checkin || 0),
+                        total_artifacts: BigInt(stats.total_artifacts || 0),
+                        current_colony: BigInt(stats.current_colony || 0),
+                        pets_owned: BigInt(stats.pets_owned || 0),
+                        grass_touch_streak: BigInt(stats.grass_touch_streak || 0),
+                    };
+                }
+
+                // Handle array format
+                if (Array.isArray(stats) && stats.length === 7) {
+                    parsedStats = {
+                        walks_xp: BigInt(stats[0] || 0),
+                        health_score: BigInt(stats[1] || 0),
+                        last_checkin: BigInt(stats[2] || 0),
+                        total_artifacts: BigInt(stats[3] || 0),
+                        current_colony: BigInt(stats[4] || 0),
+                        pets_owned: BigInt(stats[5] || 0),
+                        grass_touch_streak: BigInt(stats[6] || 0),
+                    };
+                }
+
+                if (parsedStats) {
+                    console.log('Refreshed parsed stats:', parsedStats);
+                    setPlayerStats(parsedStats);
+                } else {
+                    console.log('Could not parse refreshed stats');
+                }
             } catch (error) {
                 console.error('Failed to refresh player stats:', error);
                 // Don't reset registration status on error

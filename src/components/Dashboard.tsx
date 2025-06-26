@@ -120,9 +120,9 @@ export default function Dashboard() {
 
     const getStreakIcon = (streak: bigint) => {
         const streakNum = Number(streak);
-        if (streakNum >= 30) return <Flame className="w-6 h-6 text-orange-400" />;
-        if (streakNum >= 14) return <Star className="w-6 h-6 text-yellow-400" />;
-        if (streakNum >= 7) return <Sparkles className="w-6 h-6 text-purple-400" />;
+        if (streakNum >= 30) return <Flame className="w-6 h-6 text-white" />;
+        if (streakNum >= 14) return <Star className="w-6 h-6 text-gray-300" />;
+        if (streakNum >= 7) return <Sparkles className="w-6 h-6 text-green-300" />;
         if (streakNum >= 3) return <Leaf className="w-6 h-6 text-green-400" />;
         return <Leaf className="w-6 h-6 text-green-300" />;
     };
@@ -153,7 +153,7 @@ export default function Dashboard() {
     return (
         <div className="space-y-8">
             {/* Welcome Header */}
-            <div className="bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-2xl p-8 border border-green-500/20">
+            <div className="bg-gradient-to-r from-green-900/20 to-gray-900/20 rounded-2xl p-8 border border-green-500/20">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold text-white mb-2">
@@ -168,7 +168,7 @@ export default function Dashboard() {
                     </div>
                     <div className="text-right">
                         <div className="text-4xl mb-2">
-                            <Zap className="text-orange-400 w-10 h-10" />
+                            <Zap className="text-white w-10 h-10" />
                         </div>
                         <p className="text-green-400 font-bold text-xl">
                             {Number(actualStats.grass_touch_streak)} Day Streak
@@ -205,38 +205,38 @@ export default function Dashboard() {
                     <p className="text-slate-400 text-sm mt-1">consecutive days</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-amber-900/30 to-amber-800/20 rounded-xl p-6 border border-amber-500/30">
+                <div className="bg-gradient-to-br from-gray-900/30 to-gray-800/20 rounded-xl p-6 border border-gray-500/30">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-amber-500/20 rounded-lg">
-                            <Trophy size={24} className="text-amber-400" />
+                        <div className="p-3 bg-gray-500/20 rounded-lg">
+                            <Trophy size={24} className="text-gray-300" />
                         </div>
-                        <span className="text-2xl"><Trophy className="w-6 h-6 text-amber-300" /></span>
+                        <span className="text-2xl"><Trophy className="w-6 h-6 text-gray-300" /></span>
                     </div>
-                    <h3 className="text-amber-400 font-semibold mb-1">Artifacts Found</h3>
+                    <h3 className="text-gray-300 font-semibold mb-1">Artifacts Found</h3>
                     <p className="text-3xl font-bold text-white">{Number(actualStats.total_artifacts)}</p>
                     <p className="text-slate-400 text-sm mt-1">unique discoveries</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 rounded-xl p-6 border border-pink-500/30">
+                <div className="bg-gradient-to-br from-green-800/30 to-green-700/20 rounded-xl p-6 border border-green-400/30">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-pink-500/20 rounded-lg">
-                            <PawPrint size={24} className="text-pink-400" />
+                        <div className="p-3 bg-green-400/20 rounded-lg">
+                            <PawPrint size={24} className="text-green-300" />
                         </div>
-                        <span className="text-2xl"><PawPrint className="w-6 h-6 text-pink-300" /></span>
+                        <span className="text-2xl"><PawPrint className="w-6 h-6 text-green-300" /></span>
                     </div>
-                    <h3 className="text-pink-400 font-semibold mb-1">Pets Owned</h3>
+                    <h3 className="text-green-300 font-semibold mb-1">Pets Owned</h3>
                     <p className="text-3xl font-bold text-white">{Number(actualStats.pets_owned)}</p>
                     <p className="text-slate-400 text-sm mt-1">faithful companions</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 rounded-xl p-6 border border-red-500/30">
+                <div className="bg-gradient-to-br from-slate-900/30 to-slate-800/20 rounded-xl p-6 border border-slate-500/30">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-red-500/20 rounded-lg">
-                            <Heart size={24} className="text-red-400" />
+                        <div className="p-3 bg-slate-500/20 rounded-lg">
+                            <Heart size={24} className="text-slate-300" />
                         </div>
-                        <span className="text-2xl"><Heart className="w-6 h-6 text-red-300" /></span>
+                        <span className="text-2xl"><Heart className="w-6 h-6 text-slate-300" /></span>
                     </div>
-                    <h3 className="text-red-400 font-semibold mb-1">Health Score</h3>
+                    <h3 className="text-slate-300 font-semibold mb-1">Health Score</h3>
                     <p className="text-3xl font-bold text-white">{Number(actualStats.health_score)}%</p>
                     <p className="text-slate-400 text-sm mt-1">wellness rating</p>
                 </div>
@@ -247,8 +247,8 @@ export default function Dashboard() {
                 {/* Daily Actions */}
                 <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                     <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <div className="p-2 bg-blue-500/20 rounded-lg">
-                            <Calendar size={20} className="text-blue-400" />
+                        <div className="p-2 bg-gray-500/20 rounded-lg">
+                            <Calendar size={20} className="text-gray-300" />
                         </div>
                         Daily Actions
                     </h3>
@@ -269,10 +269,10 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-amber-900/20 rounded-lg border border-amber-500/20 hover:border-amber-500/40 transition-colors cursor-pointer">
+                        <div className="flex items-center justify-between p-4 bg-gray-900/20 rounded-lg border border-gray-500/20 hover:border-gray-500/40 transition-colors cursor-pointer">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-amber-500/20 rounded-lg">
-                                    <Trophy size={16} className="text-amber-400" />
+                                <div className="p-2 bg-gray-500/20 rounded-lg">
+                                    <Trophy size={16} className="text-gray-300" />
                                 </div>
                                 <div>
                                     <p className="font-medium text-white">Scan Location</p>
@@ -280,14 +280,14 @@ export default function Dashboard() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <span className="text-amber-400 font-bold">Artifact</span>
+                                <span className="text-gray-300 font-bold">Artifact</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-pink-900/20 rounded-lg border border-pink-500/20 hover:border-pink-500/40 transition-colors cursor-pointer">
+                        <div className="flex items-center justify-between p-4 bg-green-800/20 rounded-lg border border-green-400/20 hover:border-green-400/40 transition-colors cursor-pointer">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-pink-500/20 rounded-lg">
-                                    <PawPrint size={16} className="text-pink-400" />
+                                <div className="p-2 bg-green-400/20 rounded-lg">
+                                    <PawPrint size={16} className="text-green-300" />
                                 </div>
                                 <div>
                                     <p className="font-medium text-white">Care for Pets</p>
@@ -295,7 +295,7 @@ export default function Dashboard() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <span className="text-pink-400 font-bold">Happiness</span>
+                                <span className="text-green-300 font-bold">Happiness</span>
                             </div>
                         </div>
                     </div>
@@ -304,8 +304,8 @@ export default function Dashboard() {
                 {/* Activity Overview */}
                 <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                     <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <div className="p-2 bg-purple-500/20 rounded-lg">
-                            <Zap size={20} className="text-purple-400" />
+                        <div className="p-2 bg-gray-500/20 rounded-lg">
+                            <Zap size={20} className="text-gray-300" />
                         </div>
                         Activity Overview
                     </h3>
@@ -328,7 +328,7 @@ export default function Dashboard() {
                                 <span className="text-slate-300">Explorer Status</span>
                                 <span className={`font-medium ${Number(actualStats.grass_touch_streak) > 0
                                     ? 'text-green-400'
-                                    : 'text-amber-400'
+                                    : 'text-gray-300'
                                     }`}>
                                     {Number(actualStats.grass_touch_streak) > 0 ? 'Active Explorer' : 'Getting Started'}
                                 </span>
@@ -339,7 +339,7 @@ export default function Dashboard() {
                             <div>
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-slate-300">Colony Member</span>
-                                    <span className="text-blue-400 font-medium">
+                                    <span className="text-green-400 font-medium">
                                         Colony #{Number(actualStats.current_colony)}
                                     </span>
                                 </div>
@@ -353,7 +353,7 @@ export default function Dashboard() {
                                     <p className="text-xs text-slate-400">Explorer Level</p>
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-blue-400">{formatXP(actualStats.walks_xp)}</p>
+                                    <p className="text-2xl font-bold text-gray-300">{formatXP(actualStats.walks_xp)}</p>
                                     <p className="text-xs text-slate-400">Total XP</p>
                                 </div>
                             </div>
@@ -365,7 +365,7 @@ export default function Dashboard() {
             {/* Quick Actions Bar */}
             <div className="bg-gradient-to-r from-slate-800/80 to-slate-900/80 rounded-xl p-6 border border-slate-700">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <Activity className="text-blue-400" size={20} />
+                    <Activity className="text-gray-300" size={20} />
                     Quick Actions
                 </h3>
                 <div className="flex flex-wrap gap-4">
@@ -373,15 +373,15 @@ export default function Dashboard() {
                         <MapPin size={16} />
                         <span>Touch Grass</span>
                     </button>
-                    <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
+                    <button className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
                         <Trophy size={16} />
                         <span>Scan Area</span>
                     </button>
-                    <button className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
+                    <button className="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
                         <PawPrint size={16} />
                         <span>Visit Garden</span>
                     </button>
-                    <button className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
+                    <button className="flex items-center gap-2 bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95">
                         <Coins size={16} />
                         <span>Stake Tokens</span>
                     </button>
@@ -393,8 +393,8 @@ export default function Dashboard() {
                 {/* Achievements */}
                 <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                     <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <div className="p-2 bg-amber-500/20 rounded-lg">
-                            <Award size={20} className="text-amber-400" />
+                        <div className="p-2 bg-gray-500/20 rounded-lg">
+                            <Award size={20} className="text-gray-300" />
                         </div>
                         Achievements
                     </h3>
@@ -402,14 +402,14 @@ export default function Dashboard() {
                     <div className="space-y-4">
                         {/* First Steps Achievement */}
                         <div className={`p-4 rounded-lg border transition-all ${Number(actualStats.grass_touch_streak) > 0
-                                ? 'bg-green-900/20 border-green-500/30'
-                                : 'bg-slate-700/20 border-slate-600/30'
+                            ? 'bg-green-900/20 border-green-500/30'
+                            : 'bg-slate-700/20 border-slate-600/30'
                             }`}>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 rounded-lg ${Number(actualStats.grass_touch_streak) > 0
-                                            ? 'bg-green-500/20'
-                                            : 'bg-slate-500/20'
+                                        ? 'bg-green-500/20'
+                                        : 'bg-slate-500/20'
                                         }`}>
                                         <Leaf size={16} className={
                                             Number(actualStats.grass_touch_streak) > 0
@@ -432,18 +432,18 @@ export default function Dashboard() {
 
                         {/* Explorer Achievement */}
                         <div className={`p-4 rounded-lg border transition-all ${Number(actualStats.total_artifacts) > 0
-                                ? 'bg-amber-900/20 border-amber-500/30'
-                                : 'bg-slate-700/20 border-slate-600/30'
+                            ? 'bg-gray-900/20 border-gray-500/30'
+                            : 'bg-slate-700/20 border-slate-600/30'
                             }`}>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 rounded-lg ${Number(actualStats.total_artifacts) > 0
-                                            ? 'bg-amber-500/20'
-                                            : 'bg-slate-500/20'
+                                        ? 'bg-gray-500/20'
+                                        : 'bg-slate-500/20'
                                         }`}>
                                         <Trophy size={16} className={
                                             Number(actualStats.total_artifacts) > 0
-                                                ? 'text-amber-400'
+                                                ? 'text-gray-300'
                                                 : 'text-slate-400'
                                         } />
                                     </div>
@@ -453,7 +453,7 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                                 {Number(actualStats.total_artifacts) > 0 && (
-                                    <div className="text-amber-400">
+                                    <div className="text-gray-300">
                                         <Trophy size={16} />
                                     </div>
                                 )}
@@ -462,18 +462,18 @@ export default function Dashboard() {
 
                         {/* Streak Master Achievement */}
                         <div className={`p-4 rounded-lg border transition-all ${Number(actualStats.grass_touch_streak) >= 7
-                                ? 'bg-purple-900/20 border-purple-500/30'
-                                : 'bg-slate-700/20 border-slate-600/30'
+                            ? 'bg-green-900/20 border-green-500/30'
+                            : 'bg-slate-700/20 border-slate-600/30'
                             }`}>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 rounded-lg ${Number(actualStats.grass_touch_streak) >= 7
-                                            ? 'bg-purple-500/20'
-                                            : 'bg-slate-500/20'
+                                        ? 'bg-green-500/20'
+                                        : 'bg-slate-500/20'
                                         }`}>
                                         <Flame size={16} className={
                                             Number(actualStats.grass_touch_streak) >= 7
-                                                ? 'text-purple-400'
+                                                ? 'text-green-400'
                                                 : 'text-slate-400'
                                         } />
                                     </div>
@@ -483,7 +483,7 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                                 {Number(actualStats.grass_touch_streak) >= 7 && (
-                                    <div className="text-purple-400">
+                                    <div className="text-green-400">
                                         <Trophy size={16} />
                                     </div>
                                 )}
@@ -495,7 +495,7 @@ export default function Dashboard() {
                                 </div>
                                 <div className="w-full bg-slate-700 rounded-full h-2">
                                     <div
-                                        className="bg-purple-400 h-2 rounded-full transition-all duration-300"
+                                        className="bg-green-400 h-2 rounded-full transition-all duration-300"
                                         style={{ width: `${Math.min((Number(actualStats.grass_touch_streak) / 7) * 100, 100)}%` }}
                                     />
                                 </div>
@@ -507,8 +507,8 @@ export default function Dashboard() {
                 {/* Daily Goals */}
                 <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                     <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <div className="p-2 bg-blue-500/20 rounded-lg">
-                            <Target size={20} className="text-blue-400" />
+                        <div className="p-2 bg-gray-500/20 rounded-lg">
+                            <Target size={20} className="text-gray-300" />
                         </div>
                         Daily Goals
                     </h3>
@@ -544,18 +544,18 @@ export default function Dashboard() {
                         </div>
 
                         {/* Exploration Goal */}
-                        <div className="p-4 bg-amber-900/10 rounded-lg border border-amber-500/20">
+                        <div className="p-4 bg-gray-900/10 rounded-lg border border-gray-500/20">
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-amber-500/20 rounded-lg">
-                                        <Trophy size={16} className="text-amber-400" />
+                                    <div className="p-2 bg-gray-500/20 rounded-lg">
+                                        <Trophy size={16} className="text-gray-300" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-white">Explore & Discover</p>
                                         <p className="text-xs text-slate-400">Find hidden artifacts</p>
                                     </div>
                                 </div>
-                                <div className="text-amber-400 font-bold">
+                                <div className="text-gray-300 font-bold">
                                     Artifact
                                 </div>
                             </div>
@@ -565,25 +565,25 @@ export default function Dashboard() {
                             </div>
                             <div className="w-full bg-slate-700 rounded-full h-2">
                                 <div
-                                    className="bg-amber-400 h-2 rounded-full transition-all duration-300"
+                                    className="bg-gray-300 h-2 rounded-full transition-all duration-300"
                                     style={{ width: `${Math.min((Number(actualStats.total_artifacts) / 3) * 100, 100)}%` }}
                                 />
                             </div>
                         </div>
 
                         {/* Health Goal */}
-                        <div className="p-4 bg-red-900/10 rounded-lg border border-red-500/20">
+                        <div className="p-4 bg-gray-900/10 rounded-lg border border-gray-500/20">
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-red-500/20 rounded-lg">
-                                        <Heart size={16} className="text-red-400" />
+                                    <div className="p-2 bg-gray-500/20 rounded-lg">
+                                        <Heart size={16} className="text-gray-300" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-white">Health & Wellness</p>
                                         <p className="text-xs text-slate-400">Maintain good health score</p>
                                     </div>
                                 </div>
-                                <div className="text-red-400 font-bold">
+                                <div className="text-gray-300 font-bold">
                                     {Number(actualStats.health_score)}%
                                 </div>
                             </div>
@@ -593,7 +593,7 @@ export default function Dashboard() {
                             </div>
                             <div className="w-full bg-slate-700 rounded-full h-2">
                                 <div
-                                    className={`h-2 rounded-full transition-all duration-300 ${Number(actualStats.health_score) >= 80 ? 'bg-green-400' : 'bg-red-400'
+                                    className={`h-2 rounded-full transition-all duration-300 ${Number(actualStats.health_score) >= 80 ? 'bg-green-400' : 'bg-gray-400'
                                         }`}
                                     style={{ width: `${Math.min(Number(actualStats.health_score), 100)}%` }}
                                 />
@@ -643,20 +643,20 @@ export default function Dashboard() {
                         </div>
 
                         {Number(actualStats.total_artifacts) > 0 && (
-                            <div className="flex items-center gap-4 p-3 bg-amber-900/10 rounded-lg border border-amber-500/20">
-                                <div className="p-2 bg-amber-500/20 rounded-lg">
-                                    <Trophy size={16} className="text-amber-400" />
+                            <div className="flex items-center gap-4 p-3 bg-gray-900/10 rounded-lg border border-gray-500/20">
+                                <div className="p-2 bg-gray-500/20 rounded-lg">
+                                    <Trophy size={16} className="text-gray-300" />
                                 </div>
                                 <div className="flex-1">
                                     <p className="text-white font-medium">Found artifacts</p>
                                     <p className="text-xs text-slate-400">Total: {Number(actualStats.total_artifacts)}</p>
                                 </div>
-                                <div className="text-amber-400 font-bold text-sm">Rare</div>
+                                <div className="text-gray-300 font-bold text-sm">Rare</div>
                             </div>
                         )}
 
                         <div className="text-center py-4">
-                            <button className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1 mx-auto transition-colors">
+                            <button className="text-gray-300 hover:text-white text-sm flex items-center gap-1 mx-auto transition-colors">
                                 View All Activity
                                 <ChevronRight size={14} />
                             </button>
